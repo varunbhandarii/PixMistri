@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PixMistri</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/icon.png') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link
+      href="https://unpkg.com/cropperjs/dist/cropper.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="editor-title">PixMistri</h1>
+
+      <div class="upload-container">
+        <input
+          type="file"
+          id="imageLoader"
+          class="upload-btn"
+          name="imageLoader"
+        />
+      </div>
+
+      <div class="canvas-container">
+        <img id="image" style="max-width: 100%; display: none" />
+        <canvas id="imageCanvas"></canvas>
+      </div>
+
+      <div class="controls-container">
+        <!-- Crop and Resize Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Crop & Resize</h3>
+          <button id="enableCropButton" class="btn">Enable Crop Tool</button>
+          <button id="cropButton" class="btn" style="display: none">
+            Crop Image
+          </button>
+          <input
+            type="number"
+            id="resizeWidth"
+            placeholder="Width"
+            class="resize-input"
+          />
+          <input
+            type="number"
+            id="resizeHeight"
+            placeholder="Height"
+            class="resize-input"
+          />
+          <button id="resizeButton" class="btn">Resize Image</button>
+        </div>
+
+        <!-- Rotation Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Rotate</h3>
+          <button id="rotate90Button" class="btn">Rotate 90°</button>
+          <button id="rotate180Button" class="btn">Rotate 180°</button>
+          <button id="rotate270Button" class="btn">Rotate 270°</button>
+        </div>
+
+        <!-- Shape Drawing Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Draw Shapes</h3>
+          <button id="drawRectangleButton" class="btn">Draw Rectangle</button>
+          <button id="drawCircleButton" class="btn">Draw Circle</button>
+          <button id="drawLineButton" class="btn">Draw Line</button>
+        </div>
+
+        <!-- Color & Filter Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Filters & Colors</h3>
+          <button id="grayscaleButton" class="btn">Grayscale</button>
+          <button id="sepiaButton" class="btn">Sepia</button>
+          <button id="invertButton" class="btn">Invert</button>
+          <button id="resetFilterButton" class="btn">Reset Filter</button>
+        </div>
+
+        <!-- Text Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Text Tools</h3>
+          <input
+            type="text"
+            id="textInput"
+            placeholder="Enter text here"
+            class="text-input"
+          />
+          <select id="fontFamily" class="text-input">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+          <input
+            type="number"
+            id="fontSize"
+            value="30"
+            min="10"
+            max="100"
+            placeholder="Font Size"
+            class="text-input"
+          />
+          <input
+            type="color"
+            id="textColor"
+            value="#ffffff"
+            class="text-input"
+          />
+          <button id="addTextButton" class="btn">Add Text</button>
+        </div>
+
+        <!-- Undo/Redo Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Edit Controls</h3>
+          <button id="undoButton" class="btn">Undo</button>
+          <button id="redoButton" class="btn">Redo</button>
+        </div>
+
+        <!-- Reset and Download Controls -->
+        <div class="control-group">
+          <h3 class="control-header">Reset & Download</h3>
+          <button id="resetButton" class="btn">Reset</button>
+          <a id="downloadLink" download="edited-image.png">
+            <button id="downloadButton" class="btn">Download Image</button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://unpkg.com/cropperjs"></script>
+  </body>
+</html>
