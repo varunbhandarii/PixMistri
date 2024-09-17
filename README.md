@@ -13,13 +13,7 @@ PixMistri is a simple and powerful photo editing web application built with Flas
 
 ## Demo
 
-The live version of the app is deployed on [Render](https://render.com).
-
-Visit the live demo here: **[PixMistri Live Demo](YOUR_RENDER_APP_URL)**
-
-## Screenshots
-
-![PixMistri Interface](https://path/to/screenshot.png)
+The live version of the app is deployed on [Render]([https://render.com](https://pixmistri.onrender.com/)).
 
 ## Installation
 
