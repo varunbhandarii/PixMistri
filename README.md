@@ -13,7 +13,7 @@ PixMistri is a simple and powerful photo editing web application built with Flas
 
 ## Demo
 
-The live version of the app is deployed on [Render]([https://render.com](https://pixmistri.onrender.com/)).
+The live version of the app is deployed on [GCP](https://pixmistri-app-451462177630.us-central1.run.app/).
 
 ## Installation
 
@@ -97,6 +97,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 Flask for the web framework
-Gunicorn for deployment
-Render for free hosting
 Cropper.js for the crop tool
