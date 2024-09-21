@@ -1,7 +1,3 @@
-// ===========================
-// Variable Declarations
-// ===========================
-
 var canvas = document.getElementById("imageCanvas");
 var ctx = canvas.getContext("2d");
 var imageLoader = document.getElementById("imageLoader");
@@ -21,55 +17,49 @@ var textY = 50; // Initial y position for text
 var addedText = "";
 var mouseX = 0;
 var mouseY = 0;
-var uploadedImage = null; // Variable to hold the uploaded image object
+var uploadedImage = null;
 var resetButton = document.getElementById("resetButton");
 var downloadButton = document.getElementById("downloadButton");
 var downloadLink = document.getElementById("downloadLink");
 
-let textLayers = []; // To store multiple text layers
-let selectedLayer = null; // To track the currently selected layer
+let textLayers = [];
+let selectedLayer = null;
 
-// Variables to store the font, size, and color settings
 let selectedFont = "Arial";
 let selectedFontSize = "30px";
 let selectedColor = "#ffffff";
 
-let shapes = []; // Store all the shapes (rectangle, circle, line, etc.)
-let currentShape = null; // Store the current shape being drawn
-let drawingShape = false; // A flag to check if the user is drawing
-let selectedShapeType = ""; // Stores the currently selected shape type
-let currentFilter = "none"; // Initialize the filter as 'none'
+let shapes = [];
+let currentShape = null;
+let drawingShape = false; // Check if the user is drawing
+let selectedShapeType = "";
+let currentFilter = "none";
 
-let history = []; // Array to store history of canvas states
-let redoStack = []; // Array to store redo states
-const maxHistory = 20; // Limit the history size for memory efficiency
+let history = [];
+let redoStack = [];
+const maxHistory = 20; // Limit history size
 
 let selectedShape = null; // To track the currently selected shape
 
-// ===========================
 // Functions for Undo/Redo
-// ===========================
 
 function saveState() {
-  // Save the current canvas state (shapes and text layers) in the history
   const currentState = {
-    shapes: JSON.parse(JSON.stringify(shapes)), // Deep copy of shapes array
-    textLayers: JSON.parse(JSON.stringify(textLayers)), // Deep copy of text layers
+    shapes: JSON.parse(JSON.stringify(shapes)),
+    textLayers: JSON.parse(JSON.stringify(textLayers)),
   };
 
   history.push(currentState);
 
-  // Limit the history size to avoid using too much memory
   if (history.length > maxHistory) {
-    history.shift(); // Remove the oldest state if we exceed the limit
+    history.shift(); // Remove the oldest state
   }
 
-  // Clear the redo stack since we made a new action
+  // Clear the redo stack
   redoStack = [];
 }
 
 function restoreState(state) {
-  // Restore the canvas to a previous state
   shapes = JSON.parse(JSON.stringify(state.shapes));
   textLayers = JSON.parse(JSON.stringify(state.textLayers));
 
@@ -77,15 +67,12 @@ function restoreState(state) {
   drawCanvasWithTextAndShapes();
 }
 
-// ===========================
 // Functions for Drawing
-// ===========================
 
 function drawCanvasWithTextAndShapes(currentShape = null) {
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Apply the current filter to the context
   ctx.filter = currentFilter;
 
   // Redraw the uploaded image with the filter
@@ -96,7 +83,7 @@ function drawCanvasWithTextAndShapes(currentShape = null) {
   // Reset filter for other elements like shapes and text
   ctx.filter = "none";
 
-  // Draw all finalized shapes
+  // Draw all shapes
   shapes.forEach((shape) => {
     drawShape(shape);
   });
@@ -110,12 +97,12 @@ function drawCanvasWithTextAndShapes(currentShape = null) {
   textLayers.forEach((layer) => {
     ctx.font = layer.font;
     ctx.fillStyle = layer.color; // Apply the color for text
-    ctx.fillText(layer.text, layer.x, layer.y); // Draw the text at its position
+    ctx.fillText(layer.text, layer.x, layer.y); // Draw the text
   });
 }
 
 function drawShape(shape) {
-  ctx.strokeStyle = shape.color; // Apply the shared color for shapes
+  ctx.strokeStyle = shape.color;
   switch (shape.type) {
     case "rectangle":
       ctx.beginPath();
@@ -146,19 +133,15 @@ function drawShape(shape) {
 }
 
 function applyFilter() {
-  // Apply the current filter to the context
   ctx.filter = currentFilter;
 
-  // Redraw the canvas with the current filter
   drawCanvasWithTextAndShapes();
 
-  // Reset the filter for drawing shapes and text without affecting them
+  // Reset the filter
   ctx.filter = "none";
 }
 
-// ===========================
 // Functions for Text Handling
-// ===========================
 
 function drawCanvasWithText() {
   // Clear the canvas
@@ -171,9 +154,9 @@ function drawCanvasWithText() {
 
   // Loop through all text layers and draw each one
   textLayers.forEach((layer) => {
-    ctx.font = layer.font; // Apply the font for this layer
-    ctx.fillStyle = layer.color; // Apply the color for this layer
-    ctx.fillText(layer.text, layer.x, layer.y); // Draw the text at its position
+    ctx.font = layer.font;
+    ctx.fillStyle = layer.color;
+    ctx.fillText(layer.text, layer.x, layer.y);
   });
 }
 
@@ -185,16 +168,12 @@ function deleteSelectedTextLayer() {
     // Reset the selectedLayer variable
     selectedLayer = null;
 
-    // Redraw the canvas to reflect the deletion
+    // Redraw the canvas
     drawCanvasWithTextAndShapes();
   } else {
     alert("No text layer selected to delete.");
   }
 }
-
-// ===========================
-// Functions for Shape Handling
-// ===========================
 
 function deleteSelectedShape() {
   if (selectedShape !== null) {
@@ -211,10 +190,6 @@ function deleteSelectedShape() {
   }
 }
 
-// ===========================
-// Functions for Image Manipulation
-// ===========================
-
 function rotateImage(degrees) {
   var img = new Image();
   img.src = canvas.toDataURL();
@@ -222,7 +197,6 @@ function rotateImage(degrees) {
     var width = img.width;
     var height = img.height;
 
-    // Adjust canvas size based on the rotation
     if (degrees === 90 || degrees === 270) {
       canvas.width = height;
       canvas.height = width;
@@ -242,26 +216,21 @@ function rotateImage(degrees) {
   };
 }
 
-// ===========================
-// Event Listeners for Undo/Redo and Filters
-// ===========================
-
-// Undo
 document.getElementById("undoButton").addEventListener("click", function () {
   if (history.length > 1) {
-    const lastState = history.pop(); // Remove the latest state from the history
-    redoStack.push(lastState); // Save the state in the redo stack
-    const previousState = history[history.length - 1]; // Get the previous state
-    restoreState(previousState); // Restore the canvas to the previous state
+    const lastState = history.pop();
+    redoStack.push(lastState);
+    const previousState = history[history.length - 1];
+    restoreState(previousState);
   }
 });
 
 // Redo
 document.getElementById("redoButton").addEventListener("click", function () {
   if (redoStack.length > 0) {
-    const redoState = redoStack.pop(); // Get the last redo state
-    history.push(redoState); // Save it in the history again
-    restoreState(redoState); // Restore the canvas to the redo state
+    const redoState = redoStack.pop();
+    history.push(redoState);
+    restoreState(redoState);
   }
 });
 
@@ -269,33 +238,29 @@ document.getElementById("redoButton").addEventListener("click", function () {
 document
   .getElementById("grayscaleButton")
   .addEventListener("click", function () {
-    currentFilter = "grayscale(100%)"; // Set the filter
-    applyFilter(); // Apply the filter
+    currentFilter = "grayscale(100%)";
+    applyFilter();
   });
 
 // Sepia Filter
 document.getElementById("sepiaButton").addEventListener("click", function () {
-  currentFilter = "sepia(100%)"; // Set the filter
-  applyFilter(); // Apply the filter
+  currentFilter = "sepia(100%)";
+  applyFilter();
 });
 
 // Invert Filter
 document.getElementById("invertButton").addEventListener("click", function () {
-  currentFilter = "invert(100%)"; // Set the filter
-  applyFilter(); // Apply the filter
+  currentFilter = "invert(100%)";
+  applyFilter();
 });
 
 // Reset Filter
 document
   .getElementById("resetFilterButton")
   .addEventListener("click", function () {
-    currentFilter = "none"; // Reset the filter
-    applyFilter(); // Apply the filter
+    currentFilter = "none";
+    applyFilter();
   });
-
-// ===========================
-// Event Listeners for Shape Drawing
-// ===========================
 
 document
   .getElementById("drawRectangleButton")
@@ -315,9 +280,7 @@ document
     selectedShapeType = "line";
   });
 
-// ===========================
 // Canvas Event Listeners
-// ===========================
 
 canvas.addEventListener("mousedown", function (event) {
   mouseX = event.offsetX;
@@ -383,7 +346,6 @@ canvas.addEventListener("mouseup", function () {
     drawingShape = false;
     currentShape = null;
 
-    // Save the state after adding the shape
     saveState();
 
     // Redraw the canvas to include the finalized shape
@@ -395,56 +357,41 @@ canvas.addEventListener("mouseup", function () {
   }
 });
 
-// ===========================
-// Event Listeners for Text Settings
-// ===========================
-
-// Event listener for font family
 document.getElementById("fontFamily").addEventListener("change", function () {
   selectedFont = this.value;
 });
 
-// Event listener for font size
 document.getElementById("fontSize").addEventListener("change", function () {
-  selectedFontSize = this.value + "px"; // Add 'px' to the size
+  selectedFontSize = this.value + "px";
 });
 
-// Event listener for text color
 document.getElementById("textColor").addEventListener("input", function () {
   selectedColor = this.value;
 });
-
-// ===========================
-// Event Listener for Adding Text
-// ===========================
 
 addTextButton.addEventListener("click", function () {
   const newTextLayer = {
     text: textInput.value || "New Text",
     x: 50,
     y: 50,
-    font: `${selectedFontSize} ${selectedFont}`, // Set font size and family
-    color: selectedColor, // Set text color
+    font: `${selectedFontSize} ${selectedFont}`,
+    color: selectedColor,
   };
   textLayers.push(newTextLayer);
-  selectedLayer = textLayers.length - 1; // Select the newly added layer
+  selectedLayer = textLayers.length - 1;
 
-  saveState(); // Save the state after adding text
+  saveState();
 
   drawCanvasWithTextAndShapes();
 });
 
-// ===========================
-// Event Listener for Image Loader
-// ===========================
-
 imageLoader.addEventListener("change", function (e) {
   var reader = new FileReader();
   reader.onload = function (event) {
-    uploadedImage = new Image(); // Create a new image object
+    uploadedImage = new Image();
     uploadedImage.src = event.target.result;
 
-    // Also set the src of the 'image' element for Cropper.js
+    // set the src of the 'image' element for Cropper.js
     image.src = event.target.result;
 
     uploadedImage.onload = function () {
@@ -471,36 +418,22 @@ imageLoader.addEventListener("change", function (e) {
   reader.readAsDataURL(e.target.files[0]);
 });
 
-// ===========================
-// Event Listener for Download
-// ===========================
-
 downloadButton.addEventListener("click", function () {
-  // Convert the current canvas content to a Data URL
   var imageData = canvas.toDataURL("image/png");
 
-  // Set the download link href to the Data URL
   downloadLink.href = imageData;
 });
 
-// ===========================
-// Event Listener for Reset
-// ===========================
-
 resetButton.addEventListener("click", function () {
-  // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Reset the uploaded image and text
   uploadedImage = null;
   addedText = "";
-  textX = 50; // Reset text position
+  textX = 50;
   textY = 50;
 
-  // Clear the file input (image upload)
   imageLoader.value = "";
 
-  // Reset other variables
   shapes = [];
   textLayers = [];
   selectedLayer = null;
@@ -510,10 +443,6 @@ resetButton.addEventListener("click", function () {
 
   alert("Canvas has been reset.");
 });
-
-// ===========================
-// Event Listeners for Rotation
-// ===========================
 
 rotate90Button.addEventListener("click", function () {
   rotateImage(90);
@@ -526,10 +455,6 @@ rotate180Button.addEventListener("click", function () {
 rotate270Button.addEventListener("click", function () {
   rotateImage(270);
 });
-
-// ===========================
-// Event Listener for Resize
-// ===========================
 
 resizeButton.addEventListener("click", function () {
   var width = document.getElementById("resizeWidth").value;
@@ -544,7 +469,6 @@ resizeButton.addEventListener("click", function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Update uploadedImage with the resized image
       uploadedImage.src = canvas.toDataURL();
     };
   } else {
@@ -552,16 +476,11 @@ resizeButton.addEventListener("click", function () {
   }
 });
 
-// ===========================
-// Event Listeners for Cropper.js
-// ===========================
-
 enableCropButton.addEventListener("click", function () {
   if (!cropper) {
-    // Now initialize Cropper.js only when this button is clicked
     cropper = new Cropper(image, {
-      aspectRatio: 16 / 9, // You can adjust the aspect ratio as needed
-      viewMode: 1, // Ensure the crop box stays within the image
+      aspectRatio: 16 / 9,
+      viewMode: 1,
     });
 
     // Hide the 'Enable Crop Tool' button and show the 'Crop Image' button
@@ -575,18 +494,15 @@ cropButton.addEventListener("click", function () {
   if (cropper) {
     var croppedCanvas = cropper.getCroppedCanvas();
 
-    // Resize the canvas to match the cropped image
     canvas.width = croppedCanvas.width;
     canvas.height = croppedCanvas.height;
 
-    // Clear and draw the cropped image on the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(croppedCanvas, 0, 0);
 
     // Store the cropped image for future use
     uploadedImage.src = croppedCanvas.toDataURL();
 
-    // Destroy the cropper instance
     cropper.destroy();
     cropper = null;
 
@@ -596,18 +512,11 @@ cropButton.addEventListener("click", function () {
   }
 });
 
-// ===========================
-// Event Listener for Keyboard Events
-// ===========================
-
 document.addEventListener("keydown", function (event) {
-  // Check if the Delete key is pressed
   if (event.key === "Delete") {
     if (selectedLayer !== null) {
-      // If a text layer is selected, delete it
       deleteSelectedTextLayer();
     } else if (selectedShape !== null) {
-      // If a shape is selected, delete it
       deleteSelectedShape();
     }
   }
